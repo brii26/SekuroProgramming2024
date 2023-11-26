@@ -1,1 +1,0 @@
-# SekuroProgramming2024

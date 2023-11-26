@@ -7,12 +7,12 @@ using namespace std;
 
 // lokasi
 void lokasi(float x, float y){
+    system("clear");
     cout<<fixed<<setprecision(2)<<"==================================================="<<"\nLokasi Drone ("<<x<<" , "<<y<<")"<<"\n===================================================\n";
 }
 
 // interface
  int interface(float x , float y, int n){
-    system("clear");
     lokasi(x,y);
     cout<<"1. Simulasi Gerak Drone dengan Perpindahan\n2. Simulasi Gerak Drone dengan Kecepatan dan Waktu\n3. Undo\n4. Redo\n5. exit\n\nMasukkan angka (1-5) : ";
     cin>>n;
@@ -35,8 +35,8 @@ void gerak_2(float* Px, float* Py, float v, float t, float tetha){
     cout<<"Kecepatan drone bergerak : "; cin>>v;
     cout<<"Waktu tempuh drone : "; cin>>t;
     cout<<"Sudut : "; cin>>tetha;
-    *Py += (v * t * sin(tetha));
-    *Px += (v * t * cos(tetha));
+    *Py += (v * t * sin(tetha/180 * 3.14));
+    *Px += (v * t * cos(tetha/180 * 3.14));
 }
 
 //undo
@@ -80,25 +80,26 @@ int main(){
     vector<vector<float>> datas;
     float x = 0; float x_gerak ; float* Px = &x;
     float y = 0; float y_gerak ; float* Py = &y;
-    int n ; int value; int temp_index;
-    float v; float t; float tetha; bool history = false;
-    int* P_temp_index = &temp_index;
+     int value; int temp_index; float v; float t; 
+     float tetha; bool history = false; int n = 0 ;
+    int* P_temp_index = &temp_index; bool angka_valid = true;
+
     // interface loop
     do
     {
-        if (history == false){
+        if (history == false && angka_valid){
             datas.push_back({x , y});
             temp_index = datas.size()-1;
         }
         value = interface(x,y,n);
         switch(value)
         {
-            case 1 :  history = false; gerak(Px, Py, x_gerak, y_gerak);break;
-            case 2 :  history = false; gerak_2(Px, Py, v , t, tetha);break;
-            case 3 :  history = true; undo(Px, Py, temp_index, datas, P_temp_index);break;
-            case 4 :  history = true; redo(Px, Py, temp_index, datas, P_temp_index);break;
+            case 1 :  angka_valid = true; history = false; gerak(Px, Py, x_gerak, y_gerak);break;
+            case 2 :  angka_valid = true; history = false; gerak_2(Px, Py, v , t, tetha);break;
+            case 3 :  angka_valid = true; history = true; undo(Px, Py, temp_index, datas, P_temp_index);break;
+            case 4 :  angka_valid = true; history = true; redo(Px, Py, temp_index, datas, P_temp_index);break;
             case 5 : system("clear");cout<<"Simulasi Berakhir";break;
-            default : system("clear"); cout<<"Masukkan angka valid"; interface(x,y,n);break;
+            default : angka_valid = false; system("clear"); cout<<"Masukkan angka valid"<<flush<<usleep(600000);break;
         }
     }
     while( value != 5);
